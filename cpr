@@ -1,0 +1,156 @@
+#!/bin/bash
+
+########
+# vars #
+########
+
+DIR=""
+FROM=""
+TO=""
+ABSDIR=""
+CPSTRING=""
+ABSCPDIR=""
+BASEFILE=""
+NEWFILE=""
+ABSNEWFILE=""
+
+########
+# fncs #
+########
+
+display_help() {
+    echo
+    echo "cpr = copy (cp) and rename (r)"
+    echo
+    echo "Create a copy of a directory, renaming the directory and each"
+    echo "  filename within by finding and replacing based on a pattern."
+    echo
+    echo "Assumptions:"
+    echo "  New directory is copied into the same location as the"
+    echo "    original directory."
+    echo "  Only rename the directory and files if the from_pattern matches"
+    echo "    e.g. --from 20160101 would match for the file myfile_20160101.csv"
+    echo 
+    echo "Usage: ${0} [--dir dirname --from from_pattern --to to_pattern]"
+    echo
+    echo "  -h, --help                  display help"
+    echo "  -d, --dir dirname           directory to copy" 
+    echo "  -f, --from from_pattern     pattern to search for in directory and filenames"
+    echo "  -t, --to to_pattern         pattern to replace in directory and filenames"
+    echo
+    echo "Example: "
+    echo "  ${0} --dir 20160101 --from 20160101 --to 20160201"
+    echo 
+}
+
+abs_filename() {
+    # $1 = relative filename
+    if [ -d "$(dirname "$1")" ]; then
+        echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+    fi
+}
+
+is_match() {
+    # $1 = directory or filename
+    # $2 = string to check
+    if [[ "$1" == *"$2"* ]]; then
+        echo 1
+    else
+        echo 0
+    fi
+}
+
+string_sub() {
+    # $1 = string to perform substitution on
+    # $2 = from string
+    # $3 = to string 
+    echo "$1" | sed -e "s/${2}/${3}/"
+}
+
+########
+# args #
+########
+
+# Use > 1 to consume two arguments per pass in the loop
+#   each argument has a corresponding value to go with it
+# Use > 0 to consume one or more arguments per pass in the loop
+#   some arguments don't have a corresponding value to go with it
+
+while [[ $# > 0 ]]; do
+    key="$1"
+
+    case $key in
+        -h | --help)
+            display_help
+            exit 0
+            ;;
+        -d | --dir)
+            DIR="$2"
+            shift
+            ;;
+        -f | --from)
+            FROM="$2"
+            shift
+            ;;
+        -t | --to)
+            TO="$2"
+            shift
+            ;;
+        *)
+            # if extra parameter passed, ignore
+            ;;
+    esac
+
+    shift
+
+done
+
+#######
+# run #
+#######
+
+if [[ "$(is_match ${DIR} ${FROM})" == "1" ]]; then
+    # Copy directory
+    ABSDIR="$(abs_filename ${DIR})"
+    CPSTRING="$(string_sub ${DIR} ${FROM} ${TO})"
+    ABSCPDIR="$(dirname ${ABSDIR})/${CPSTRING}"
+    echo
+    echo "###########"
+    echo "# Copying #"
+    echo "###########"
+    echo
+    echo "Copying ${ABSDIR} to ${ABSCPDIR}"
+    echo
+    cp -ir $ABSDIR $ABSCPDIR
+
+    # Descend into directory and begin changing files
+    if [[ -d "${ABSCPDIR}" ]]; then
+        echo "############"
+        echo "# Renaming #"
+        echo "############"
+        echo
+    
+        for ABSFILE in ${ABSCPDIR}/*; do
+            BASEFILE="$(basename ${ABSFILE})"
+            NEWFILE="$(string_sub ${BASEFILE} ${FROM} ${TO})"
+            ABSNEWFILE="${ABSCPDIR}/${NEWFILE}"
+            if [[ "$(is_match ${BASEFILE} ${FROM})" == "1" ]]; then
+                echo "Renaming ${ABSFILE} to ${ABSNEWFILE}"
+                mv -i $ABSFILE $ABSNEWFILE
+            else
+                echo "The pattern ${FROM} cannot be found within ${BASEFILE}"
+            fi
+        done
+
+        echo
+        echo "########"
+        echo "# Done #"
+        echo "########"
+        echo
+    fi
+else
+    echo
+    echo "The pattern ${FROM} cannot be found within ${DIR}"
+    echo
+    exit 0
+fi
