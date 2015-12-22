@@ -7,6 +7,7 @@
 DIR=""
 FROM=""
 TO=""
+BASEDIR=""
 ABSDIR=""
 CPSTRING=""
 ABSCPDIR=""
@@ -109,10 +110,11 @@ done
 # run #
 #######
 
-if [[ "$(is_match ${DIR} ${FROM})" == "1" ]]; then
+BASEDIR="$(basename ${DIR})"
+if [[ "$(is_match ${BASEDIR} ${FROM})" == "1" ]]; then
     # Copy directory
     ABSDIR="$(abs_filename ${DIR})"
-    CPSTRING="$(string_sub ${DIR} ${FROM} ${TO})"
+    CPSTRING="$(string_sub ${BASEDIR} ${FROM} ${TO})"
     ABSCPDIR="$(dirname ${ABSDIR})/${CPSTRING}"
     echo
     echo "###########"
