@@ -2,9 +2,9 @@
 Create a copy of a directory, renaming the directory and each filename within by finding and replacing based on a pattern.
 
 ## Assumptions
-* New directory is copied into the same location as the original directory.
-* Only rename the directory and files if the from_pattern matches.
-    * e.g. --from 20160101 would match for the file myfile_20160101.csv
+* New directory is copied into the same location as the original directory
+* Only rename the directory and files if the from_pattern matches
+    * e.g. `--from 20160101` would match for the file `myfile_20160101.csv`
 
 ## Usage
 ```
