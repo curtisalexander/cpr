@@ -8,7 +8,7 @@ Create a copy of a directory, renaming the directory and each filename within by
 
 ## Usage
 ```
-cpr [--dir dirname --from from_patter --to to_pattern]
+cpr --dir dirname --from from_patter --to to_pattern
 
     -h, --help                  display help
     -d, --dir dirname           directory to copy
