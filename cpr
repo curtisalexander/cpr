@@ -44,13 +44,6 @@ display_help() {
     echo 
 }
 
-abs_filename() {
-    # $1 = relative filename
-    if [ -d "$(dirname "$1")" ]; then
-        echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
-    fi
-}
-
 is_match() {
     # $1 = directory or filename
     # $2 = string to check
@@ -111,9 +104,10 @@ done
 #######
 
 BASEDIR="$(basename ${DIR})"
+
 if [[ "$(is_match ${BASEDIR} ${FROM})" == "1" ]]; then
     # Copy directory
-    ABSDIR="$(abs_filename ${DIR})"
+    ABSDIR="$(readlink -m ${DIR})"
     CPSTRING="$(string_sub ${BASEDIR} ${FROM} ${TO})"
     ABSCPDIR="$(dirname ${ABSDIR})/${CPSTRING}"
     echo
