@@ -18,7 +18,7 @@ cpr --dir dirname --from from_patter --to to_pattern
 
 ## Example
 ```
-$ cpr --dir 20160101 --from 20160101 --to 20160201
+cpr --dir 20160101 --from 20160101 --to 20160201
 ```
 
 ## Requirements
