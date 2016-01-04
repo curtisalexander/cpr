@@ -32,7 +32,7 @@ display_help() {
     echo "  Only rename the directory and files if the from_pattern matches"
     echo "    e.g. --from 20160101 would match for the file myfile_20160101.csv"
     echo 
-    echo "Usage: ${0} --dir dirname --from from_pattern --to to_pattern"
+    echo "Usage: cpr --dir dirname --from from_pattern --to to_pattern"
     echo
     echo "  -h, --help                  display help"
     echo "  -d, --dir dirname           directory to copy" 
@@ -40,7 +40,7 @@ display_help() {
     echo "  -t, --to to_pattern         pattern to replace in directory and filenames"
     echo
     echo "Example: "
-    echo "  ${0} --dir 20160101 --from 20160101 --to 20160201"
+    echo "  cpr --dir 20160101 --from 20160101 --to 20160201"
     echo 
 }
 
